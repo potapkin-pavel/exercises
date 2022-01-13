@@ -138,10 +138,11 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 🕯 HINT: Use recursion to implement this function.
 -}
 lowerAndGreater :: Int -> [Int] -> [Char]
-lowerAndGreater n list = go 0 list
+lowerAndGreater n = go 0 0
     where 
-        go :: Int -> [Int] -> [Char]
-        go result l
-            | null l = show n ++ " is greater than all elements"
-            | head l == n = show n ++ " is greater than " ++ show (length list - length (tail l) - 1) ++ " elements and lower than " ++ show (length ( tail l )) ++ " elements"
-            | otherwise = go (result + 1) (tail l)
+        go :: Int -> Int -> [Int] -> [Char]
+        go greater lower l
+            | null l = show n ++ " is greater than " ++ show greater ++ " elements and lower than " ++ show lower ++ " elements"
+            | head l > n = go greater (lower + 1) (tail l)
+            | head l < n = go (greater + 1) lower (tail l)
+            | otherwise = go greater lower (tail l)
