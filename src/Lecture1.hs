@@ -70,9 +70,7 @@ sumOfSquares x y = square x + square y
 
 -- DON'T FORGET TO SPECIFY THE TYPE IN HERE
 lastDigit :: Int -> Int
-lastDigit n
-    | n > 0 = mod n 10
-    | otherwise = mod (n * (-1)) 10
+lastDigit n = if n > 0 then mod n 10 else mod (n * (-1)) 10
 
 {- | Write a function that takes three numbers and returns the
 difference between the biggest number and the smallest one.
@@ -90,7 +88,7 @@ minmax :: Int -> Int -> Int -> Int
 minmax x y z =
     let minValue = min x (min y z)
         maxValue = max x (max y z)
-    in maxValue - minValue  
+    in maxValue - minValue
 
 {- | Implement a function that takes a string, start and end positions
 and returns a substring of a given string from the start position to
@@ -108,7 +106,7 @@ first character) and negative end position should result in an empty
 string.
 -}
 subString :: Int -> Int -> [Char] -> [Char]
-subString start end str 
+subString start end str
     | start > end = ""
     | start < 0 && start < end = take end str
     | otherwise = drop start (take (end + 1) str)
@@ -139,7 +137,7 @@ and lower than 6 elements (4, 5, 6, 7, 8 and 9).
 -}
 lowerAndGreater :: Int -> [Int] -> [Char]
 lowerAndGreater n = go 0 0
-    where 
+    where
         go :: Int -> Int -> [Int] -> [Char]
         go greater lower l
             | null l = show n ++ " is greater than " ++ show greater ++ " elements and lower than " ++ show lower ++ " elements"
