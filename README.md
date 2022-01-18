@@ -16,7 +16,7 @@ corresponding name (e.g. `Lecture1.hs`).
 ## Deadlines
 
 These exercises were created specifically for the Haskell Beginners
-2022 course. You can expect to get feedback on your solutions in you
+2022 course. You can expect to get feedback on your solutions if you
 meet the following deadlines:
 
 * `Lecture1.hs`: Jan 17, 2022, 23:59:59 GMT
@@ -42,7 +42,7 @@ environment and preparing the exercises repository.
     ```
 
     You can verify that everything is done correctly by running the
-    `git remote -v` command. The output of this command will looks
+    `git remote -v` command. The output of this command will look
     similar to the below:
 
     ```shell
@@ -54,7 +54,15 @@ environment and preparing the exercises repository.
 
 ### Asking for feedback
 
-When you finished implementing exercises for a particular lecture,
+Implement your solutions in a separate branch (not `main`). You can
+run the following command to create a new branch and switch to it at
+the same time:
+
+```shell
+git checkout -b lecture-1-solutions
+```
+
+When you have finished implementing exercises for a particular lecture,
 create a Pull Request to **your fork**. The repository already
 contains PR template with the prefilled text and mentions all current
 mentors of the course.
@@ -62,9 +70,9 @@ mentors of the course.
 > ℹ️**NOTE:** Open Pull Request to **your fork** and not this
 > repository. We can't merge solutions to this repo. But if you open
 > PRs to your repository, you can eventually merge all the solutions
-> and enjoy gree all-passing CI 🍏
+> and enjoy green all-passing CI 🍏
 
-To open a PR to your fork, you need to change _base repository_ to 
+To open a PR to your fork, you need to change _base repository_ to
 your own repository, as shown on the screenshot below:
 
 ![PR to fork example](https://user-images.githubusercontent.com/4276606/147921946-e9b84424-e76f-4f7a-8976-e33564ae1532.png)
@@ -146,7 +154,22 @@ If you don't have any IDE preferences, we recommend installing
 [Haskell plugin](https://marketplace.visualstudio.com/items?itemName=haskell.haskell).
 The mentioned plugin would give you everything required to immediately start coding with Haskell.
 
+### Gitpod
+Instead of configuring a local setup, you can also use [Gitpod](https://www.gitpod.io/), a VSCode-based Web IDE.
+
+Click the button below. A workspace with Haskell environment will be created.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/haskell-beginners-2022/exercises)
+
+To use it on your forked repo, edit the 'Open in Gitpod' button url to `https://gitpod.io/#https://github.com/<my-github-username>/exercises`
+
 ## How to build and test?
+
+There're two ways to build this project: using either `cabal` or
+`stack` build tools. Using `cabal` is the recommended way. However, if
+it doesn't work, you may want to use `stack`.
+
+### Cabal
 
 To compile the entire project, run the following command from your terminal:
 
@@ -166,6 +189,29 @@ tests for the `strSum` function, execute the following command:
 
 ```shell
 cabal run exercises-test --enable-tests -- -m "strSum"
+```
+
+### Stack
+
+Use the [official `stack` installation instructions](https://docs.haskellstack.org/en/stable/install_and_upgrade/) to install `stack`.
+
+To build the project with `stack`, run the following command:
+
+```shell
+stack build --test --no-run-tests
+```
+
+To run tests for the first lecture, run the following commands:
+
+```shell
+stack test :doctest-lecture1
+stack test :exercises-test --test-arguments='-m "Lecture 1"'
+```
+
+And to tests a specific function, use:
+
+```shell
+stack test :exercises-test --test-arguments='-m "strSum"'
 ```
 
 ## Acknowledgement
