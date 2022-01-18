@@ -41,6 +41,7 @@ module Lecture2
     ) where
 
 import Data.Char
+import Data.List
 
 {- | Implement a function that finds a product of all the numbers in
 the list. But implement a lazier version of this function: if you see
@@ -102,6 +103,7 @@ spaces.
 -}
 dropSpaces:: [Char] -> [Char]
 dropSpaces = reverse . dropWhile isSpace . reverse . dropWhile isSpace
+-- dropSpaces = dropWhileEnd isSpace . dropWhile isSpace
 
 {- |
 
