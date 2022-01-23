@@ -51,7 +51,8 @@ zero, you can stop calculating product and return 0 immediately.
 84
 -}
 lazyProduct :: [Int] -> Int
-lazyProduct = error "TODO"
+lazyProduct [] = 1
+lazyProduct (x:xs) = if x == 0 then 0 else x * lazyProduct xs
 
 {- | Implement a function that duplicates every element in the list.
 
