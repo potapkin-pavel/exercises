@@ -41,7 +41,6 @@ module Lecture2
     ) where
 
 import Data.Char
-import Data.List
 
 {- | Implement a function that finds a product of all the numbers in
 the list. But implement a lazier version of this function: if you see
@@ -195,7 +194,14 @@ False
 True
 -}
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing = go True
+  where
+    go :: Bool -> [Int] -> Bool
+    go acc [] = acc
+    go acc [_] = acc
+    go acc (x : xs) 
+      | x < head xs = go acc xs
+      | otherwise = False
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
