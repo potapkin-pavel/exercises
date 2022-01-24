@@ -51,8 +51,15 @@ zero, you can stop calculating product and return 0 immediately.
 84
 -}
 lazyProduct :: [Int] -> Int
-lazyProduct [] = 1
-lazyProduct (x:xs) = if x == 0 then 0 else x * lazyProduct xs
+-- lazyProduct [] = 1
+-- lazyProduct (x:xs) = if x == 0 then 0 else x * lazyProduct xs
+lazyProduct = go 1
+  where
+    go :: Int -> [Int] -> Int
+    go acc [] = acc
+    go acc (x : xs) 
+      | x == 0 = 0
+      | otherwise = go (acc * x) xs
 
 {- | Implement a function that duplicates every element in the list.
 
