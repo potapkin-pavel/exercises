@@ -84,7 +84,7 @@ return the removed element.
 -}
 removeAt :: Int -> [a] -> (Maybe a, [a])
 removeAt _ [] = (Nothing, [])
-removeAt a xs = if a > length xs || a < 0 then (Nothing, xs) else (Just (xs !! a), let (as, bs) = splitAt a xs in as ++ tail bs)
+removeAt a xs = if a >= length xs || a < 0 then (Nothing, xs) else (Just (xs !! a), let (as, bs) = splitAt a xs in as ++ tail bs)
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
