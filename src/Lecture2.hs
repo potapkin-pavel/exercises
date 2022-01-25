@@ -56,7 +56,7 @@ lazyProduct = go 1
   where
     go :: Int -> [Int] -> Int
     go acc [] = acc
-    go acc (x : xs) 
+    go acc (x : xs)
       | x == 0 = 0
       | otherwise = go (acc * x) xs
 
@@ -68,7 +68,7 @@ lazyProduct = go 1
 "ccaabb"
 -}
 duplicate :: [a] -> [a]
-duplicate list = case list of 
+duplicate list = case list of
   [] -> []
   (x:xs) -> x : x : duplicate xs
 
@@ -200,7 +200,7 @@ isIncreasing = go True
     go :: Bool -> [Int] -> Bool
     go acc [] = acc
     go acc [_] = acc
-    go acc (x : xs) 
+    go acc (x : xs)
       | x < head xs = go acc xs
       | otherwise = False
 
@@ -233,9 +233,14 @@ The algorithm of merge sort is the following:
 >>> mergeSort [3, 1, 2]
 [1,2,3]
 -}
-mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
+half :: [a] -> ([a], [a])
+half list = splitAt (length list `div` 2) list
 
+mergeSort :: [Int] -> [Int]
+mergeSort list 
+  | length list < 2 = list
+  | otherwise = merge (mergeSort left) (mergeSort right)
+    where (left, right) = half list
 
 {- | Haskell is famous for being a superb language for implementing
 compilers and interpeters to other programming languages. In the next
