@@ -179,21 +179,22 @@ data Chest = MkChest
     , chestTreasure :: Maybe Treasure
     }
 
-data Treasure = Sword { attack :: Int }
+data Treasure = Sword
               | Armor
               | Gem
+              deriving Show
 
 
 data Dragon = Dragon { dragonHealth :: Int, dragonFirePower :: Int, experience :: Int, chest :: Chest}
 
 data Reward = MkReward
     { gainedExperience :: Int
-    , gold :: Int
-    , treasure :: Maybe Treasure
+    , gainedGold :: Int
+    , gainedTreasure :: Maybe Treasure
     }
 
 data FightResult = DragonDies { reward :: Reward }
-                 | KnightDies
+                 | KnightDies 
                  | KnightRunsAway
 
 dragonFight :: Knight -> Dragon -> FightResult
@@ -206,13 +207,17 @@ dragonFight =
         | dragonHealth <= 0 = DragonDies (MkReward experience chestGold chestTreasure)
         | knightEndurance <= 0 = KnightRunsAway
         | strikes == 10 = fight (strikes + 1) (Knight (knightHealth - dragonFirePower) knightAttack knightEndurance) (Dragon dragonHealth dragonFirePower experience (MkChest chestGold chestTreasure))
-        | otherwise = fight (strikes + 1) (Knight knightHealth knightAttack knightEndurance) (Dragon dragonHealth dragonFirePower experience (MkChest chestGold chestTreasure))
+        | otherwise = fight (strikes + 1) (Knight knightHealth knightAttack (knightEndurance - 1)) (Dragon (dragonHealth - knightAttack) dragonFirePower experience (MkChest chestGold chestTreasure))
 
 showFightResult :: FightResult -> String
 showFightResult fightResult = case fightResult of
-  DragonDies _ -> "dragon dies"
+  DragonDies reward -> "dragon dies and knight gets " ++ show (gainedExperience reward) ++ " points of expirience, " ++ show (gainedGold reward) ++ " amount of gold and " ++ show (gainedTreasure reward)
   KnightDies -> "knight dies"
   KnightRunsAway -> "knight runs away"
+
+chest1 = MkChest 100 (Just Sword)
+dragon1 = Dragon 1500 150 55 chest1
+knight1 = Knight 100 10 25
 
 ----------------------------------------------------------------------------
 -- Challenges
