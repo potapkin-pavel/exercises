@@ -175,10 +175,13 @@ data Knight = Knight
     , knightEndurance :: Int
     }
 
-data Chest = MkChest
-    { chestGold     :: Int
-    , chestTreasure :: Maybe Treasure
-    }
+type Gold = Int
+
+data Chest = MkChest {
+  chestGold :: Gold
+  , chestTreasure :: Maybe Treasure
+  }
+
 
 data Treasure = Sword
               | Armor
@@ -188,7 +191,7 @@ data Treasure = Sword
 data Color = Red
            | Black
            | Green
-            deriving Show 
+            deriving Show
 
 data Dragon = Dragon
     { color :: Color
@@ -199,28 +202,36 @@ data Dragon = Dragon
 
 data Reward = MkReward
     { gainedExperience :: Int
-    , gainedGold :: Int
+    , gainedGold :: Gold
     , gainedTreasure :: Maybe Treasure
     }
 
 data FightResult = DragonDies Reward
-                 | KnightDies 
+                 | KnightDies
                  | KnightRunsAway
 
 dragonFight :: Knight -> Dragon -> FightResult
-dragonFight =
-   fight 0
+dragonFight knight dragon =
+   fight 0 (knight, dragon)
     where
-      fight :: Int -> Knight -> Dragon -> FightResult
-      fight strikes (Knight knightHealth knightAttack knightEndurance) (Dragon color dragonHealth dragonFirePower chest)
-        | knightHealth <= 0 = KnightDies
-        | dragonHealth <= 0 = case color of 
-          Red -> DragonDies (MkReward 100 (chestGold chest) (chestTreasure chest))
-          Black -> DragonDies (MkReward 150 (chestGold chest) (chestTreasure chest))
-          Green -> DragonDies (MkReward 250 (chestGold chest) Nothing)
-        | knightEndurance <= 0 = KnightRunsAway
-        | strikes == 10 = fight (strikes + 1) (Knight (knightHealth - dragonFirePower) knightAttack knightEndurance) (Dragon color (dragonHealth - knightAttack) dragonFirePower (MkChest (chestGold chest) (chestTreasure chest)))
-        | otherwise = fight (strikes + 1) (Knight knightHealth knightAttack (knightEndurance - 1)) (Dragon color (dragonHealth - knightAttack) dragonFirePower (MkChest (chestGold chest) (chestTreasure chest)))
+      fight :: Int -> (Knight, Dragon) -> FightResult
+      fight strikes (k, d)
+        | knightHealth k <= 0 = KnightDies
+        | dragonHealth d <= 0 = case color d of
+          Red -> DragonDies (MkReward 100 (chestGold . chest $ d) (chestTreasure . chest $ d))
+          Black -> DragonDies (MkReward 150 (chestGold . chest $ d) (chestTreasure . chest $ d))
+          Green -> DragonDies (MkReward 250 (chestGold . chest $ d) Nothing)
+        | knightEndurance k <= 0 = KnightRunsAway
+        | strikes == 10 = fight (strikes + 1) (dragonBreath k d)
+        | otherwise = fight (strikes + 1) (slayDragon k d)
+
+slayDragon :: Knight -> Dragon -> (Knight, Dragon)
+slayDragon (Knight knightHealth knightAttack knightEndurance) (Dragon color dragonHealth dragonFirePower (MkChest gold treasure)) =
+  (Knight knightHealth knightAttack (knightEndurance - 1), Dragon color (dragonHealth - knightAttack) dragonFirePower (MkChest gold treasure))
+
+dragonBreath :: Knight -> Dragon -> (Knight, Dragon)
+dragonBreath (Knight knightHealth knightAttack knightEndurance) (Dragon color dragonHealth dragonFirePower (MkChest gold treasure)) =
+  (Knight (knightHealth - dragonFirePower) knightAttack knightEndurance, Dragon color (dragonHealth - knightAttack) dragonFirePower (MkChest gold treasure))
 
 showFightResult :: FightResult -> String
 showFightResult fightResult = case fightResult of
