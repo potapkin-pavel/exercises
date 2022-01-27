@@ -174,7 +174,45 @@ data Knight = Knight
     , knightEndurance :: Int
     }
 
-dragonFight = error "TODO"
+data Chest = MkChest
+    { chestGold     :: Int
+    , chestTreasure :: Maybe Treasure
+    }
+
+data Treasure = Sword { attack :: Int }
+              | Armor
+              | Gem
+
+
+data Dragon = Dragon { dragonHealth :: Int, dragonFirePower :: Int, experience :: Int, chest :: Chest}
+
+data Reward = MkReward
+    { gainedExperience :: Int
+    , gold :: Int
+    , treasure :: Maybe Treasure
+    }
+
+data FightResult = DragonDies { reward :: Reward }
+                 | KnightDies
+                 | KnightRunsAway
+
+dragonFight :: Knight -> Dragon -> FightResult
+dragonFight =
+   fight 0
+    where
+      fight :: Int -> Knight -> Dragon -> FightResult
+      fight strikes (Knight knightHealth knightAttack knightEndurance) (Dragon dragonHealth dragonFirePower experience (MkChest chestGold chestTreasure))
+        | knightHealth <= 0 = KnightDies
+        | dragonHealth <= 0 = DragonDies (MkReward experience chestGold chestTreasure)
+        | knightEndurance <= 0 = KnightRunsAway
+        | strikes == 10 = fight (strikes + 1) (Knight (knightHealth - dragonFirePower) knightAttack knightEndurance) (Dragon dragonHealth dragonFirePower experience (MkChest chestGold chestTreasure))
+        | otherwise = fight (strikes + 1) (Knight knightHealth knightAttack knightEndurance) (Dragon dragonHealth dragonFirePower experience (MkChest chestGold chestTreasure))
+
+showFightResult :: FightResult -> String
+showFightResult fightResult = case fightResult of
+  DragonDies _ -> "dragon dies"
+  KnightDies -> "knight dies"
+  KnightRunsAway -> "knight runs away"
 
 ----------------------------------------------------------------------------
 -- Challenges
