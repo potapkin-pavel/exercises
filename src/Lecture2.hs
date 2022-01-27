@@ -184,7 +184,6 @@ data Treasure = Sword
               | Gem
               deriving Show
 
-
 data Dragon = Dragon { dragonHealth :: Int, dragonFirePower :: Int, experience :: Int, chest :: Chest}
 
 data Reward = MkReward
@@ -202,12 +201,12 @@ dragonFight =
    fight 0
     where
       fight :: Int -> Knight -> Dragon -> FightResult
-      fight strikes (Knight knightHealth knightAttack knightEndurance) (Dragon dragonHealth dragonFirePower experience (MkChest chestGold chestTreasure))
+      fight strikes (Knight knightHealth knightAttack knightEndurance) (Dragon dragonHealth dragonFirePower experience chest)
         | knightHealth <= 0 = KnightDies
-        | dragonHealth <= 0 = DragonDies (MkReward experience chestGold chestTreasure)
+        | dragonHealth <= 0 = DragonDies (MkReward experience (chestGold chest) (chestTreasure chest))
         | knightEndurance <= 0 = KnightRunsAway
-        | strikes == 10 = fight (strikes + 1) (Knight (knightHealth - dragonFirePower) knightAttack knightEndurance) (Dragon dragonHealth dragonFirePower experience (MkChest chestGold chestTreasure))
-        | otherwise = fight (strikes + 1) (Knight knightHealth knightAttack (knightEndurance - 1)) (Dragon (dragonHealth - knightAttack) dragonFirePower experience (MkChest chestGold chestTreasure))
+        | strikes == 10 = fight (strikes + 1) (Knight (knightHealth - dragonFirePower) knightAttack knightEndurance) (Dragon (dragonHealth - knightAttack) dragonFirePower experience (MkChest (chestGold chest) (chestTreasure chest)))
+        | otherwise = fight (strikes + 1) (Knight knightHealth knightAttack (knightEndurance - 1)) (Dragon (dragonHealth - knightAttack) dragonFirePower experience (MkChest (chestGold chest) (chestTreasure chest)))
 
 showFightResult :: FightResult -> String
 showFightResult fightResult = case fightResult of
