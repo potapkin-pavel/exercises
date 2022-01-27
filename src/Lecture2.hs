@@ -168,6 +168,7 @@ You're free to define any helper functions.
 -}
 
 -- some help in the beginning ;)
+
 data Knight = Knight
     { knightHealth    :: Int
     , knightAttack    :: Int
@@ -187,8 +188,14 @@ data Treasure = Sword
 data Color = Red
            | Black
            | Green
+            deriving Show 
 
-data Dragon = Dragon { color :: Color, dragonHealth :: Int, dragonFirePower :: Int, chest :: Chest}
+data Dragon = Dragon
+    { color :: Color
+    , dragonHealth :: Int
+    , dragonFirePower :: Int
+    , chest :: Chest
+    }
 
 data Reward = MkReward
     { gainedExperience :: Int
@@ -196,7 +203,7 @@ data Reward = MkReward
     , gainedTreasure :: Maybe Treasure
     }
 
-data FightResult = DragonDies { reward :: Reward }
+data FightResult = DragonDies Reward
                  | KnightDies 
                  | KnightRunsAway
 
@@ -217,7 +224,12 @@ dragonFight =
 
 showFightResult :: FightResult -> String
 showFightResult fightResult = case fightResult of
-  DragonDies reward -> "dragon dies and knight gets " ++ show (gainedExperience reward) ++ " points of expirience, " ++ show (gainedGold reward) ++ " amount of gold" ++ case gainedTreasure reward of
+  DragonDies reward -> "dragon dies and knight gets "
+    ++ show (gainedExperience reward)
+    ++ " points of expirience, "
+    ++ show (gainedGold reward)
+    ++ " amount of gold"
+    ++ case gainedTreasure reward of
     Nothing -> ""
     treasure -> " and " ++ show treasure
   KnightDies -> "knight dies"
