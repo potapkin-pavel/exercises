@@ -40,6 +40,8 @@ module Lecture2
     , constantFolding
     ) where
 
+import Data.Char
+
 {- | Implement a function that finds a product of all the numbers in
 the list. But implement a lazier version of this function: if you see
 zero, you can stop calculating product and return 0 immediately.
@@ -48,7 +50,15 @@ zero, you can stop calculating product and return 0 immediately.
 84
 -}
 lazyProduct :: [Int] -> Int
-lazyProduct = error "TODO"
+-- lazyProduct [] = 1
+-- lazyProduct (x:xs) = if x == 0 then 0 else x * lazyProduct xs
+lazyProduct = go 1
+  where
+    go :: Int -> [Int] -> Int
+    go acc [] = acc
+    go acc (x : xs)
+      | x == 0 = 0
+      | otherwise = go (acc * x) xs
 
 {- | Implement a function that duplicates every element in the list.
 
@@ -58,7 +68,9 @@ lazyProduct = error "TODO"
 "ccaabb"
 -}
 duplicate :: [a] -> [a]
-duplicate = error "TODO"
+duplicate list = case list of
+  [] -> []
+  (x:xs) -> x : x : duplicate xs
 
 {- | Implement function that takes index and a list and removes the
 element at the given position. Additionally, this function should also
@@ -70,7 +82,9 @@ return the removed element.
 >>> removeAt 10 [1 .. 5]
 (Nothing,[1,2,3,4,5])
 -}
-removeAt = error "TODO"
+removeAt :: Int -> [a] -> (Maybe a, [a])
+removeAt _ [] = (Nothing, [])
+removeAt a xs = if a >= length xs || a < 0 then (Nothing, xs) else (Just (xs !! a), let (as, bs) = splitAt a xs in as ++ tail bs)
 
 {- | Write a function that takes a list of lists and returns only
 lists of even lengths.
@@ -81,7 +95,8 @@ lists of even lengths.
 ♫ NOTE: Use eta-reduction and function composition (the dot (.) operator)
   in this function.
 -}
-evenLists = error "TODO"
+evenLists::[[a]] -> [[a]]
+evenLists = filter (even . length)
 
 {- | The @dropSpaces@ function takes a string containing a single word
 or number surrounded by spaces and removes all leading and trailing
@@ -97,7 +112,9 @@ spaces.
 
 🕯 HINT: look into Data.Char and Prelude modules for functions you may use.
 -}
-dropSpaces = error "TODO"
+dropSpaces:: [Char] -> [Char]
+dropSpaces = reverse . dropWhile isSpace . reverse . dropWhile isSpace
+-- dropSpaces = dropWhileEnd isSpace . dropWhile isSpace
 
 {- |
 
@@ -154,13 +171,91 @@ You're free to define any helper functions.
 -}
 
 -- some help in the beginning ;)
+
 data Knight = Knight
     { knightHealth    :: Int
     , knightAttack    :: Int
     , knightEndurance :: Int
     }
 
-dragonFight = error "TODO"
+type Gold = Int
+
+data Chest = MkChest
+    { chestGold :: Gold
+    , chestTreasure :: Maybe Treasure
+    }
+
+data Treasure = Sword
+              | Armor
+              | Gem
+              deriving Show
+
+data Color = Red
+           | Black
+           | Green
+            deriving Show
+
+data Dragon = Dragon
+    { color :: Color
+    , dragonHealth :: Int
+    , dragonFirePower :: Int
+    , chest :: Chest
+    }
+
+data Reward = MkReward
+    { gainedExperience :: Int
+    , gainedGold :: Gold
+    , gainedTreasure :: Maybe Treasure
+    }
+
+data FightResult = DragonDies Reward
+                 | KnightDies
+                 | KnightRunsAway
+
+dragonFight :: Knight -> Dragon -> FightResult
+dragonFight knight dragon =
+   fight 0 (knight, dragon)
+    where
+      fight :: Int -> (Knight, Dragon) -> FightResult
+      fight strikes (k, d)
+        | knightHealth k <= 0 = KnightDies
+        | dragonHealth d <= 0 = case color d of
+          Red -> DragonDies (MkReward 100 (chestGold . chest $ d) (chestTreasure . chest $ d))
+          Black -> DragonDies (MkReward 150 (chestGold . chest $ d) (chestTreasure . chest $ d))
+          Green -> DragonDies (MkReward 250 (chestGold . chest $ d) Nothing)
+        | knightEndurance k <= 0 = KnightRunsAway
+        | strikes == 10 = fight (strikes + 1) (dragonBreath k d)
+        | otherwise = fight (strikes + 1) (slayDragon k d)
+
+slayDragon :: Knight -> Dragon -> (Knight, Dragon)
+slayDragon (Knight knightHealth knightAttack knightEndurance) (Dragon color dragonHealth dragonFirePower (MkChest gold treasure)) =
+  (Knight knightHealth knightAttack (knightEndurance - 1), Dragon color (dragonHealth - knightAttack) dragonFirePower (MkChest gold treasure))
+
+dragonBreath :: Knight -> Dragon -> (Knight, Dragon)
+dragonBreath (Knight knightHealth knightAttack knightEndurance) (Dragon color dragonHealth dragonFirePower (MkChest gold treasure)) =
+  (Knight (knightHealth - dragonFirePower) knightAttack knightEndurance, Dragon color (dragonHealth - knightAttack) dragonFirePower (MkChest gold treasure))
+
+showFightResult :: FightResult -> String
+showFightResult fightResult = case fightResult of
+  DragonDies reward -> "dragon dies and knight gets "
+    ++ show (gainedExperience reward)
+    ++ " points of expirience, "
+    ++ show (gainedGold reward)
+    ++ " amount of gold"
+    ++ case gainedTreasure reward of
+    Nothing -> ""
+    treasure -> " and " ++ show treasure
+  KnightDies -> "knight dies"
+  KnightRunsAway -> "knight runs away"
+
+chest1 :: Chest
+chest1 = MkChest 100 (Just Sword)
+
+dragon1 :: Dragon
+dragon1 = Dragon Red 150 35 chest1
+
+knight1 :: Knight
+knight1 = Knight 100 10 25
 
 ----------------------------------------------------------------------------
 -- Extra Challenges
@@ -181,7 +276,14 @@ False
 True
 -}
 isIncreasing :: [Int] -> Bool
-isIncreasing = error "TODO"
+isIncreasing = go True
+  where
+    go :: Bool -> [Int] -> Bool
+    go acc [] = acc
+    go acc [_] = acc
+    go acc (x : xs)
+      | x < head xs = go acc xs
+      | otherwise = False
 
 {- | Implement a function that takes two lists, sorted in the
 increasing order, and merges them into new list, also sorted in the
@@ -194,7 +296,9 @@ verify that.
 [1,2,3,4,7]
 -}
 merge :: [Int] -> [Int] -> [Int]
-merge = error "TODO"
+merge xs [] = xs
+merge [] ys = ys
+merge (x:xs) (y:ys) = if x < y then x : merge xs (y:ys) else y : merge (x:xs) ys
 
 {- | Implement the "Merge Sort" algorithm in Haskell. The @mergeSort@
 function takes a list of numbers and returns a new list containing the
@@ -210,9 +314,14 @@ The algorithm of merge sort is the following:
 >>> mergeSort [3, 1, 2]
 [1,2,3]
 -}
-mergeSort :: [Int] -> [Int]
-mergeSort = error "TODO"
+half :: [a] -> ([a], [a])
+half list = splitAt (length list `div` 2) list
 
+mergeSort :: [Int] -> [Int]
+mergeSort list
+  | length list < 2 = list
+  | otherwise = merge (mergeSort left) (mergeSort right)
+    where (left, right) = half list
 
 {- | Haskell is famous for being a superb language for implementing
 compilers and interpeters to other programming languages. In the next
