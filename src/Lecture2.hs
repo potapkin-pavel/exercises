@@ -177,11 +177,10 @@ data Knight = Knight
 
 type Gold = Int
 
-data Chest = MkChest {
-  chestGold :: Gold
-  , chestTreasure :: Maybe Treasure
-  }
-
+data Chest = MkChest
+    { chestGold :: Gold
+    , chestTreasure :: Maybe Treasure
+    }
 
 data Treasure = Sword
               | Armor
@@ -246,8 +245,13 @@ showFightResult fightResult = case fightResult of
   KnightDies -> "knight dies"
   KnightRunsAway -> "knight runs away"
 
+chest1 :: Chest
 chest1 = MkChest 100 (Just Sword)
+
+dragon1 :: Dragon
 dragon1 = Dragon Red 150 35 chest1
+
+knight1 :: Knight
 knight1 = Knight 100 10 25
 
 ----------------------------------------------------------------------------
