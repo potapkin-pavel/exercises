@@ -57,7 +57,7 @@ of a weekday.
 >>> toShortString Monday
 "Mon"
 -}
-toShortString = error "TODO"
+toShortString :: Weekday -> String
 
 {- | Write a function that returns next day of the week, following the
 given day.
