@@ -91,7 +91,11 @@ weekday to the second.
 >>> daysTo Friday Wednesday
 5
 -}
-daysTo = error "TODO"
+daysTo :: Weekday -> Weekday -> Int
+daysTo firstDay secondDay
+    | firstDay < secondDay = (length . enumFrom $ firstDay) - (length . enumFrom $ secondDay)
+    | firstDay > secondDay = (length . enumFrom $ firstDay) + (7 - length (enumFrom secondDay))
+    | otherwise  = 0
 
 {-
 
