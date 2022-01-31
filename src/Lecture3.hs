@@ -1,4 +1,4 @@
-{-# LANGUAGE InstanceSigs #-}
+
 
 {- |
 Module                  : Lecture3
@@ -80,6 +80,7 @@ Tuesday
   would work for **any** enumeration type in Haskell (e.g. 'Bool',
   'Ordering') and not just 'Weekday'?
 -}
+
 next :: Weekday -> Weekday
 next Sunday = Monday
 next day = succ day
@@ -95,9 +96,9 @@ weekday to the second.
 
 daysTo :: Weekday -> Weekday -> Int
 daysTo firstDay secondDay = go 0 firstDay
-  where 
+  where
     go :: Int -> Weekday -> Int
-    go days day 
+    go days day
       | day == secondDay = days
       | otherwise = go (days + 1) (next day)
 
@@ -115,10 +116,10 @@ newtype Gold = Gold
 
 -- | Addition of gold coins.
 instance Semigroup Gold where
-
+  (<>) x y = Gold (unGold x + unGold y)
 
 instance Monoid Gold where
-
+  mempty = Gold 0
 
 {- | A reward for completing a difficult quest says how much gold
 you'll receive and whether you'll get a special reward.
