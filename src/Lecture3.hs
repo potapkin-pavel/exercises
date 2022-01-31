@@ -81,7 +81,8 @@ Tuesday
   'Ordering') and not just 'Weekday'?
 -}
 next :: Weekday -> Weekday
-next = succ
+next Sunday = Monday
+next day = succ day
 
 {- | Implement a function that calculates number of days from the first
 weekday to the second.
