@@ -133,7 +133,7 @@ data Reward = Reward
     } deriving (Show, Eq)
 
 instance Semigroup Reward where
-
+  (<>) x y = Reward (rewardGold x <> rewardGold y) (rewardSpecial x || rewardSpecial y)
 
 instance Monoid Reward where
 
