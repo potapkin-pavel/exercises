@@ -1,4 +1,4 @@
-{-# LANGUAGE InstanceSigs #-}
+
 
 {- |
 Module                  : Lecture3
@@ -52,7 +52,7 @@ data Weekday
     | Friday
     | Saturday
     | Sunday
-    deriving (Show, Eq)
+    deriving (Show, Eq, Enum, Ord)
 
 {- | Write a function that will display only the first three letters
 of a weekday.
@@ -60,7 +60,8 @@ of a weekday.
 >>> toShortString Monday
 "Mon"
 -}
-toShortString = error "TODO"
+toShortString :: Weekday -> String
+toShortString = take 3 . show
 
 {- | Write a function that returns next day of the week, following the
 given day.
@@ -82,7 +83,10 @@ Tuesday
   would work for **any** enumeration type in Haskell (e.g. 'Bool',
   'Ordering') and not just 'Weekday'?
 -}
-next = error "TODO"
+
+next :: Weekday -> Weekday
+next Sunday = Monday
+next day = succ day
 
 {- | Implement a function that calculates number of days from the first
 weekday to the second.
@@ -92,7 +96,14 @@ weekday to the second.
 >>> daysTo Friday Wednesday
 5
 -}
-daysTo = error "TODO"
+
+daysTo :: Weekday -> Weekday -> Int
+daysTo firstDay secondDay = go 0 firstDay
+  where
+    go :: Int -> Weekday -> Int
+    go days day
+      | day == secondDay = days
+      | otherwise = go (days + 1) (next day)
 
 {-
 
@@ -108,10 +119,10 @@ newtype Gold = Gold
 
 -- | Addition of gold coins.
 instance Semigroup Gold where
-
+  (<>) x y = Gold (unGold x + unGold y)
 
 instance Monoid Gold where
-
+  mempty = Gold 0
 
 {- | A reward for completing a difficult quest says how much gold
 you'll receive and whether you'll get a special reward.
@@ -125,10 +136,10 @@ data Reward = Reward
     } deriving (Show, Eq)
 
 instance Semigroup Reward where
-
+  (<>) x y = Reward (rewardGold x <> rewardGold y) (rewardSpecial x || rewardSpecial y)
 
 instance Monoid Reward where
-
+  mempty = Reward mempty False
 
 {- | 'List1' is a list that contains at least one element.
 -}
@@ -137,7 +148,7 @@ data List1 a = List1 a [a]
 
 -- | This should be list append.
 instance Semigroup (List1 a) where
-
+  (<>) (List1 a as) (List1 b bs) = List1 a (as <> (b : bs))
 
 {- | Does 'List1' have the 'Monoid' instance? If no then why?
 
